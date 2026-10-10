@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+```
+<title>Edit Department | Smart Hospital</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f3f6fb;
+        color: #243247;
+    }
+
+    header {
+        background: #1769aa;
+        color: white;
+        padding: 22px 30px;
+    }
+
+    header h1 {
+        margin: 0;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 650px;
+        margin: 40px auto;
+    }
+
+    .card {
+        background: white;
+        padding: 28px;
+        border-radius: 10px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+        color: #1769aa;
+        margin-top: 0;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccd5e0;
+        border-radius: 6px;
+        font-size: 15px;
+    }
+
+    .buttons {
+        margin-top: 25px;
+    }
+
+    button,
+    .cancel-btn {
+        display: inline-block;
+        padding: 11px 18px;
+        border: none;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: bold;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .save-btn {
+        background: #1769aa;
+        color: white;
+    }
+
+    .cancel-btn {
+        background: #e4e9ef;
+        color: #243247;
+        margin-left: 8px;
+    }
+
+    .message {
+        padding: 12px;
+        margin-bottom: 18px;
+        border-radius: 5px;
+        background: #ffe0e0;
+        color: #a50000;
+    }
+
+    @media (max-width: 600px) {
+        .container {
+            width: 95%;
+            margin: 20px auto;
+        }
+
+        .card {
+            padding: 18px;
+        }
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<header>
+    <h1>Smart Hospital Management System</h1>
+    <p>Edit Department Details</p>
+</header>
+
+<div class="container">
+
+```
+<div class="card">
+
+    <h2>Update Department</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <form
+        action="{{ url_for('edit_department', department_id=department['id']) }}"
+        method="POST">
+
+        <div class="form-group">
+            <label for="department_name">Department Name</label>
+
+            <input
+                type="text"
+                id="department_name"
+                name="department_name"
+                value="{{ department['department_name'] }}"
+                maxlength="100"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label for="department_head">Department Head</label>
+
+            <input
+                type="text"
+                id="department_head"
+                name="department_head"
+                value="{{ department['department_head'] }}"
+                maxlength="100"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label for="location">Location</label>
+
+            <input
+                type="text"
+                id="location"
+                name="location"
+                value="{{ department['location'] }}"
+                maxlength="100"
+                required>
+        </div>
+
+        <div class="buttons">
+            <button type="submit" class="save-btn">
+                Save Changes
+            </button>
+
+            <a href="{{ url_for('departments') }}" class="cancel-btn">
+                Cancel
+            </a>
+        </div>
+
+    </form>
+
+</div>
+```
+
+</div>
+
+</body>
+</html>

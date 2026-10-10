@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Patient | SmartCare{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+    <h2>✏️ Edit Patient Details</h2>
+    <p>Update the patient's information below.</p>
+</section>
+
+<section class="panel">
+
+    <form method="POST"
+          action="{{ url_for('edit_patient', patient_id=patient.id) }}"
+          class="patient-form">
+
+        <div class="form-group">
+            <label for="name">Patient Name</label>
+            <input type="text"
+                   id="name"
+                   name="name"
+                   value="{{ patient.name }}"
+                   maxlength="100"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label for="age">Age</label>
+            <input type="number"
+                   id="age"
+                   name="age"
+                   value="{{ patient.age }}"
+                   min="1"
+                   max="120"
+                   required>
+        </div>
+
+        <div class="form-group">
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender" required>
+                <option value="Female"
+                    {% if patient.gender == 'Female' %}selected{% endif %}>
+                    Female
+                </option>
+
+                <option value="Male"
+                    {% if patient.gender == 'Male' %}selected{% endif %}>
+                    Male
+                </option>
+
+                <option value="Other"
+                    {% if patient.gender == 'Other' %}selected{% endif %}>
+                    Other
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel"
+                   id="phone"
+                   name="phone"
+                   value="{{ patient.phone }}"
+                   maxlength="15"
+                   required>
+        </div>
+
+        <div class="form-group full-width">
+            <label for="condition_name">Medical Condition</label>
+            <input type="text"
+                   id="condition_name"
+                   name="condition_name"
+                   value="{{ patient.condition_name }}"
+                   maxlength="200"
+                   required>
+        </div>
+
+        <button type="submit" class="primary-button">
+            Save Changes
+        </button>
+
+        <a href="{{ url_for('patients') }}" class="back-link">
+            Cancel
+        </a>
+
+    </form>
+
+</section>
+
+{% endblock %}

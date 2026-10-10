@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block title %}Department Management | Smart Hospital{% endblock %}
+
+{% block content %}
+
+<style>
+    .department-page {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .department-page .page-heading {
+        color: #073b4c;
+        font-size: 26px;
+        margin-bottom: 8px;
+    }
+
+    .department-page .page-description {
+        color: #718096;
+        margin-bottom: 25px;
+        line-height: 1.6;
+    }
+
+    /* Cards */
+    .department-page .department-card {
+        background: white;
+        padding: 25px;
+        margin-bottom: 25px;
+        border-radius: 14px;
+        border: 1px solid #e5edf3;
+        box-shadow: 0 4px 15px rgba(20, 50, 70, 0.05);
+    }
+
+    .department-page .department-card h2 {
+        margin: 0 0 22px;
+        color: #073b4c;
+        font-size: 21px;
+    }
+
+    /* Department Form */
+    .department-page .department-form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px 25px;
+    }
+
+    .department-page .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .department-page .form-group label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #334155;
+    }
+
+    .department-page .form-group input {
+        width: 100%;
+        min-width: 0;
+        height: 44px;
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        background: white;
+        color: #243447;
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .department-page .form-group input:focus {
+        border-color: #087f8c;
+        box-shadow: 0 0 0 3px rgba(8, 127, 140, 0.12);
+    }
+
+    .department-page .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .department-page .add-button {
+        grid-column: 1 / -1;
+        justify-self: start;
+        padding: 12px 20px;
+        background: #087f8c;
+        color: white;
+        border: none;
+        border-radius: 7px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .department-page .add-button:hover {
+        background: #06636e;
+    }
+
+    /* Table */
+    .department-page .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .department-page table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .department-page th,
+    .department-page td {
+        padding: 14px 12px;
+        border-bottom: 1px solid #e5edf3;
+        text-align: left;
+        vertical-align: middle;
+        font-size: 14px;
+    }
+
+    .department-page th {
+        background: #f1f7fa;
+        color: #073b4c;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .department-page tbody tr:hover {
+        background: #f8fbfd;
+    }
+
+    .department-page .department-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .department-page .department-actions form {
+        margin: 0;
+    }
+
+    .department-page .action-button {
+        display: inline-block;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .department-page .edit-button {
+        background: #e1f3ff;
+        color: #075985;
+    }
+
+    .department-page .edit-button:hover {
+        background: #bae6fd;
+    }
+
+    .department-page .delete-button {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .department-page .delete-button:hover {
+        background: #fecaca;
+    }
+
+    .department-page .empty-state {
+        padding: 30px;
+        text-align: center;
+        color: #64748b;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 650px) {
+        .department-page .department-card {
+            padding: 18px;
+        }
+
+        .department-page .department-form {
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .department-page .form-group.full-width,
+        .department-page .add-button {
+            grid-column: auto;
+        }
+    }
+</style>
+
+<div class="department-page">
+
+    <h2 class="page-heading">Department Management</h2>
+
+    <p class="page-description">
+        Manage hospital departments, department heads, and department locations.
+    </p>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="alert {{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+    <!-- Add Department -->
+    <section class="department-card">
+
+        <h2>Add New Department</h2>
+
+        <form
+            action="{{ url_for('add_department') }}"
+            method="POST"
+            class="department-form"
+        >
+
+            <div class="form-group">
+                <label for="department_name">Department Name</label>
+
+                <input
+                    type="text"
+                    id="department_name"
+                    name="department_name"
+                    placeholder="e.g. Cardiology"
+                    maxlength="100"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="department_head">Department Head</label>
+
+                <input
+                    type="text"
+                    id="department_head"
+                    name="department_head"
+                    placeholder="Enter department head"
+                    maxlength="100"
+                    required
+                >
+            </div>
+
+            <div class="form-group full-width">
+                <label for="location">Department Location</label>
+
+                <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    placeholder="e.g. Block A, First Floor"
+                    maxlength="100"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="add-button">
+                + Add Department
+            </button>
+
+        </form>
+
+    </section>
+
+    <!-- Department Records -->
+    <section class="department-card">
+
+        <h2>Department Records</h2>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Department Name</th>
+                        <th>Department Head</th>
+                        <th>Location</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for department in departments %}
+
+                    <tr>
+                        <td>{{ department['id'] }}</td>
+
+                        <td>{{ department['department_name'] }}</td>
+
+                        <td>{{ department['department_head'] }}</td>
+
+                        <td>{{ department['location'] }}</td>
+
+                        <td>
+                            <div class="department-actions">
+
+                                <!-- Edit Department -->
+                                <a
+                                    class="action-button edit-button"
+                                    href="{{ url_for(
+                                        'edit_department',
+                                        department_id=department['id']
+                                    ) }}"
+                                >
+                                    Edit
+                                </a>
+
+                                <!-- Delete Department -->
+                                <form
+                                    action="{{ url_for(
+                                        'delete_department',
+                                        department_id=department['id']
+                                    ) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('Are you sure you want to delete this department?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="action-button delete-button"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            No departments have been added yet.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

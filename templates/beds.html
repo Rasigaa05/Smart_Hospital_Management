@@ -1,0 +1,362 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="welcome">
+    <h2>Bed Management</h2>
+    <p>Manage bed availability, allocate beds to patients, and track occupancy.</p>
+</section>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="message {{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<!-- Bed Statistics -->
+<section class="stats-container">
+
+    <div class="panel">
+        <h3>Total Beds</h3>
+        <h2>{{ beds|length }}</h2>
+    </div>
+
+    <div class="panel">
+        <h3>Available Beds</h3>
+        <h2>
+            {{ beds|selectattr('status', 'equalto', 'Available')|list|length }}
+        </h2>
+    </div>
+
+    <div class="panel">
+        <h3>Occupied Beds</h3>
+        <h2>
+            {{ beds|selectattr('status', 'equalto', 'Occupied')|list|length }}
+        </h2>
+    </div>
+
+</section>
+
+<!-- Add New Bed -->
+<section class="panel">
+
+    <h2>➕ Add New Bed</h2>
+
+    <form action="{{ url_for('add_bed') }}"
+          method="POST"
+          class="patient-form">
+
+        <div class="form-group">
+            <label for="bed_number">Bed Number</label>
+
+            <input
+                type="text"
+                id="bed_number"
+                name="bed_number"
+                placeholder="Example: G-101"
+                maxlength="30"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="bed_type">Bed Type</label>
+
+            <select id="bed_type" name="bed_type" required>
+                <option value="">Select Bed Type</option>
+                <option value="General">General</option>
+                <option value="Private">Private</option>
+                <option value="ICU">ICU</option>
+            </select>
+        </div>
+
+        <button type="submit" class="primary-button">
+            Add Bed
+        </button>
+
+    </form>
+
+</section>
+
+<!-- Bed Records -->
+<section class="panel">
+
+    <h2>🛏️ Bed Availability and Allocation</h2>
+
+    {% if beds %}
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Bed Number</th>
+                    <th>Bed Type</th>
+                    <th>Status</th>
+                    <th>Allocated Patient</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for bed in beds %}
+
+                <tr>
+
+                    <td>{{ bed['id'] }}</td>
+
+                    <td>{{ bed['bed_number'] }}</td>
+
+                    <td>{{ bed['bed_type'] }}</td>
+
+                    <td>
+                        {% if bed['status'] == 'Available' %}
+
+                            <span class="status available">
+                                Available
+                            </span>
+
+                        {% else %}
+
+                            <span class="status occupied">
+                                Occupied
+                            </span>
+
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ bed['patient_name'] or 'None' }}
+                    </td>
+
+                    <td>
+
+                        {% if bed['status'] == 'Available' %}
+
+                            {% if patients %}
+
+                            <form
+                                action="{{ url_for(
+                                    'allocate_bed',
+                                    bed_id=bed['id']
+                                ) }}"
+                                method="POST"
+                                class="action-form"
+                            >
+
+                                <select name="patient_id" required>
+                                    <option value="">Select Patient</option>
+
+                                    {% for patient in patients %}
+
+                                    <option value="{{ patient['id'] }}">
+                                        {{ patient['name'] }}
+                                    </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                                <button
+                                    type="submit"
+                                    class="allocate-button"
+                                >
+                                    Allocate
+                                </button>
+
+                            </form>
+
+                            {% else %}
+
+                                <p>Add a patient first.</p>
+
+                            {% endif %}
+
+                            <form
+                                action="{{ url_for(
+                                    'delete_bed',
+                                    bed_id=bed['id']
+                                ) }}"
+                                method="POST"
+                                onsubmit="return confirm(
+                                    'Are you sure you want to delete this bed?'
+                                );"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="delete-button"
+                                >
+                                    Delete
+                                </button>
+
+                            </form>
+
+                        {% else %}
+
+                            <form
+                                action="{{ url_for(
+                                    'release_bed',
+                                    bed_id=bed['id']
+                                ) }}"
+                                method="POST"
+                                onsubmit="return confirm(
+                                    'Are you sure you want to release this bed?'
+                                );"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="release-button"
+                                >
+                                    Release Bed
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+        <p>No beds registered yet.</p>
+        <p>Use the form above to add your first bed.</p>
+    </div>
+
+    {% endif %}
+
+</section>
+
+<a href="{{ url_for('dashboard') }}" class="back-link">
+    ← Back to Dashboard
+</a>
+
+<style>
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .stats-container .panel {
+        margin-bottom: 0;
+        border-left: 4px solid #1565c0;
+    }
+
+    .stats-container h3 {
+        color: #64748b;
+        font-size: 15px;
+        margin-top: 0;
+    }
+
+    .stats-container h2 {
+        font-size: 28px;
+        margin-bottom: 0;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 11px;
+        border: 1px solid #ccd6e0;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .available {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .occupied {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .action-form {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+    }
+
+    .action-form select {
+        min-width: 120px;
+        max-width: 170px;
+        padding: 8px;
+        border: 1px solid #ccd6e0;
+        border-radius: 5px;
+    }
+
+    .allocate-button {
+        background: #198754;
+        color: white;
+        border: none;
+        padding: 9px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .release-button {
+        background: #e69500;
+        color: white;
+        border: none;
+        padding: 9px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .delete-button {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 9px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+        .stats-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+{% endblock %}

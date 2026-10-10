@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="panel">
+
+    <h2>Doctor Management</h2>
+
+    <h3>Register a Doctor</h3>
+
+    <form action="{{ url_for('add_doctor') }}" method="POST">
+
+        <input
+            type="text"
+            name="name"
+            placeholder="Doctor Name"
+            required
+        >
+
+        <input
+            type="text"
+            name="specialization"
+            placeholder="Specialization"
+            required
+        >
+
+        <input
+            type="tel"
+            name="phone"
+            placeholder="Phone Number"
+            required
+        >
+
+        <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            required
+        >
+
+        <button type="submit">Add Doctor</button>
+
+    </form>
+
+    <hr>
+
+    <h3>Registered Doctors</h3>
+
+    <form action="{{ url_for('doctors') }}" method="GET">
+        <input
+            type="text"
+            name="search"
+            placeholder="Search by name or specialization"
+            value="{{ search }}"
+        >
+
+        <button type="submit">Search</button>
+
+        <a href="{{ url_for('doctors') }}">Clear</a>
+    </form>
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Specialization</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for doctor in doctors %}
+
+                <tr>
+                    <td>{{ doctor.id }}</td>
+                    <td>{{ doctor.name }}</td>
+                    <td>{{ doctor.specialization }}</td>
+                    <td>{{ doctor.phone }}</td>
+                    <td>{{ doctor.email }}</td>
+
+       <td>
+    <div class="action-buttons">
+
+        <a
+            href="{{ url_for('edit_doctor', doctor_id=doctor.id) }}"
+            class="edit-button"
+        >
+            Edit
+        </a>
+
+        <form
+            action="{{ url_for('delete_doctor', doctor_id=doctor.id) }}"
+            method="POST"
+            onsubmit="return confirm('Delete this doctor?');"
+        >
+            <button type="submit" class="delete-button">
+                Delete
+            </button>
+        </form>
+
+    </div>
+</td>
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="6">No doctors registered yet.</td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}SmartCare Hospital{% endblock %}</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div class="layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <h2>🏥 SmartCare</h2>
+            <p class="subtitle">Hospital Management</p>
+
+            <nav>
+                <a href="{{ url_for('dashboard') }}"
+                   class="{% if request.endpoint == 'dashboard' %}active{% endif %}">
+                    📊 Dashboard
+                </a>
+
+                <a href="{{ url_for('patients') }}"
+                   class="{% if request.endpoint == 'patients' %}active{% endif %}">
+                    🧑‍🤝‍🧑 Patients
+                </a>
+
+                <a href="{{ url_for('appointments') }}"
+                   class="{% if request.endpoint == 'appointments' %}active{% endif %}">
+                    📅 Appointments
+                </a>
+
+                <a href="{{ url_for('doctors') }}"
+                   class="{% if request.endpoint == 'doctors' %}active{% endif %}">
+                    👨‍⚕️ Doctors
+                </a>
+                <a href="{{ url_for('bills') }}"
+   class="{% if request.endpoint in ['bills', 'add_bill', 'update_bill_status', 'delete_bill'] %}active{% endif %}">
+    💳 Billing
+</a>
+
+<a href="{{ url_for('departments') }}"
+   class="{% if request.endpoint in ['departments', 'add_department', 'edit_department', 'delete_department'] %}active{% endif %}">
+    🏢 Departments
+</a>
+
+<a href="{{ url_for('beds') }}"
+   class="{% if request.endpoint in ['beds', 'add_bed', 'allocate_bed', 'release_bed', 'delete_bed'] %}active{% endif %}">
+    🛏️ Beds
+</a>
+
+                {% if session.get('admin_id') %}
+                <form action="{{ url_for('logout') }}" method="POST">
+                    <button type="submit" class="logout-button">
+                        🚪 Logout
+                    </button>
+                </form>
+                {% endif %}
+            </nav>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <header class="topbar">
+                <div>
+                    <h1>Smart Hospital Management</h1>
+                    <p>Hospital Administration Portal</p>
+                </div>
+
+                {% if session.get('admin_id') %}
+                <span class="admin-badge">
+                    👤 {{ session.get('admin_username', 'Administrator') }}
+                </span>
+                {% endif %}
+            </header>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                    <div class="alert {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+
+        </main>
+
+    </div>
+
+</body>
+</html>

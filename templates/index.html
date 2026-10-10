@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="welcome">
+    <h2>Welcome to SmartCare Hospital 👋</h2>
+    <p>Manage your hospital activities from one place.</p>
+</section>
+
+<!-- Dashboard Statistics -->
+
+<section class="stats">
+<div class="card">
+    <div class="card-icon">🧑‍⚕️</div>
+    <h3>Total Doctors</h3>
+    <p class="number">{{ total_doctors }}</p>
+    <span>Registered doctors</span>
+</div>
+
+<div class="card">
+    <div class="card-icon">🧑‍🤝‍🧑</div>
+    <h3>Total Patients</h3>
+    <p class="number">{{ total_patients }}</p>
+    <span>Registered patients</span>
+</div>
+
+<div class="card">
+    <div class="card-icon">📅</div>
+    <h3>Appointments</h3>
+    <p class="number">{{ total_appointments }}</p>
+    <span>Total appointments</span>
+</div>
+
+<div class="card">
+    <div class="card-icon">🛏️</div>
+    <h3>Total Beds</h3>
+    <p class="number">{{ total_beds }}</p>
+    <span>Registered hospital beds</span>
+</div>
+
+<div class="card">
+    <div class="card-icon">✅</div>
+    <h3>Available Beds</h3>
+    <p class="number">{{ available_beds }}</p>
+    <span>Ready for allocation</span>
+</div>
+
+<div class="card">
+    <div class="card-icon">🏥</div>
+    <h3>Occupied Beds</h3>
+    <p class="number">{{ occupied_beds }}</p>
+    <span>Currently allocated</span>
+</div>
+
+<div class="card">
+    <div class="card-icon">🏢</div>
+    <h3>Departments</h3>
+    <p class="number">{{ total_departments }}</p>
+    <span>Registered departments</span>
+</div>
+
+<div class="card">
+    <div class="card-icon">💰</div>
+    <h3>Total Billing</h3>
+    <p class="number">₹{{ "%.2f"|format(total_billing_amount) }}</p>
+    <span>Total generated bills</span>
+</div>
+
+<div class="card">
+    <div class="card-icon">💵</div>
+    <h3>Paid Amount</h3>
+    <p class="number">₹{{ "%.2f"|format(paid_amount) }}</p>
+    <span>Payments received</span>
+</div>
+
+<div class="card">
+    <div class="card-icon">⏳</div>
+    <h3>Unpaid Amount</h3>
+    <p class="number">₹{{ "%.2f"|format(unpaid_amount) }}</p>
+    <span>Payments pending</span>
+</div>
+
+
+</section>
+
+<!-- Hospital Overview -->
+
+<section class="panel">
+    <h2>Hospital Overview</h2>
+
+
+<p>
+    SmartCare helps hospital staff organize patient records,
+    doctor information, appointments, billing, departments,
+    and bed allocation in one place.
+</p>
+
+<div class="dashboard-actions">
+    <a class="primary-button" href="{{ url_for('patients') }}">
+        Manage Patients →
+    </a>
+
+    <a class="primary-button" href="{{ url_for('doctors') }}">
+        Manage Doctors →
+    </a>
+
+    <a class="primary-button" href="{{ url_for('appointments') }}">
+        View Appointments →
+    </a>
+
+    <a class="primary-button" href="{{ url_for('bills') }}">
+        Manage Billing →
+    </a>
+
+    <a class="primary-button" href="{{ url_for('departments') }}">
+        Manage Departments →
+    </a>
+
+    <a class="primary-button" href="{{ url_for('beds') }}">
+        Manage Beds →
+    </a>
+</div>
+
+</section>
+
+<!-- Upcoming Appointments -->
+
+<section class="panel">
+    <h2>📅 Upcoming Appointments</h2>
+
+
+{% if upcoming_appointments %}
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for appointment in upcoming_appointments %}
+            <tr>
+                <td>{{ appointment.patient_name }}</td>
+                <td>{{ appointment.doctor_name }}</td>
+                <td>{{ appointment.appointment_date }}</td>
+                <td>{{ appointment.appointment_time }}</td>
+                <td>
+                    <span class="appointment-status {{ appointment.status|lower }}">
+                        {{ appointment.status }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+
+<div class="empty-state">
+    <p>No upcoming scheduled appointments.</p>
+</div>
+
+{% endif %}
+
+<a href="{{ url_for('appointments') }}" class="primary-button">
+    Manage Appointments
+</a>
+
+
+</section>
+
+{% endblock %}

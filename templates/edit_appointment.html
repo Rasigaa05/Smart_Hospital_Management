@@ -1,0 +1,283 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Appointment | Smart Hospital</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        header {
+            background: #0f4c81;
+            color: white;
+            padding: 22px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        header h1 {
+            font-size: 23px;
+        }
+
+        header a {
+            color: white;
+            background: #2563a6;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            margin: 40px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            color: #0f4c81;
+            margin-bottom: 25px;
+        }
+
+        .message {
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: 2px solid #93c5fd;
+            border-color: #2563eb;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        button, .cancel {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .save {
+            background: #0f4c81;
+            color: white;
+        }
+
+        .cancel {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 500px) {
+            .card {
+                padding: 20px;
+            }
+
+            header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Smart Hospital Management</h1>
+    <a href="{{ url_for('appointments') }}">Back to Appointments</a>
+</header>
+
+<main class="container">
+
+    <section class="card">
+
+        <h2>Edit Appointment #{{ appointment['id'] }}</h2>
+
+        <!-- Display Flask messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <form
+            action="{{ url_for(
+                'edit_appointment',
+                appointment_id=appointment['id']
+            ) }}"
+            method="POST"
+        >
+
+            <div class="form-group">
+                <label for="patient_name">Patient Name</label>
+
+                <input
+                    type="text"
+                    id="patient_name"
+                    name="patient_name"
+                    value="{{ appointment['patient_name'] }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="doctor_name">Doctor Name</label>
+
+                <input
+                    type="text"
+                    id="doctor_name"
+                    name="doctor_name"
+                    value="{{ appointment['doctor_name'] }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="appointment_date">Appointment Date</label>
+
+                <input
+                    type="date"
+                    id="appointment_date"
+                    name="appointment_date"
+                    value="{{ appointment['appointment_date'] }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="appointment_time">Appointment Time</label>
+
+                <input
+                    type="time"
+                    id="appointment_time"
+                    name="appointment_time"
+                    value="{{ appointment['appointment_time'] }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="reason">Reason for Appointment</label>
+
+                <textarea
+                    id="reason"
+                    name="reason"
+                    required
+                >{{ appointment['reason'] }}</textarea>
+            </div>
+
+            <div class="buttons">
+                <button type="submit" class="save">
+                    Save Changes
+                </button>
+
+                <a
+                    href="{{ url_for('appointments') }}"
+                    class="cancel"
+                >
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+<footer>
+    Smart Hospital Management System &copy; 2026
+</footer>
+
+<script>
+    const dateInput = document.getElementById("appointment_date");
+
+    const now = new Date();
+
+    const today = [
+        now.getFullYear(),
+        String(now.getMonth() + 1).padStart(2, "0"),
+        String(now.getDate()).padStart(2, "0")
+    ].join("-");
+
+    dateInput.min = today;
+</script>
+
+</body>
+</html>
