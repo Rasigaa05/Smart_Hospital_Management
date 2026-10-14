@@ -1307,6 +1307,12 @@ def delete_bed(bed_id):
 
     conn.close()
     return redirect(url_for("beds"))
+# ==================== MEDI ASSIST ====================
+
+@app.route("/medi_assist")
+@login_required
+def medi_assist():
+    return render_template("medi_assist.html")
 
 
 

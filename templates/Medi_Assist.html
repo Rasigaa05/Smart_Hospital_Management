@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Medi Assist | SmartCare Hospital</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f6fb;
+            color: #243447;
+        }
+
+        .header {
+            background: #087f8c;
+            color: white;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .chat-card {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .chat-box {
+            height: 380px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8fafc;
+            border: 1px solid #e0e8ef;
+            border-radius: 10px;
+        }
+
+        .message {
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 12px;
+            max-width: 85%;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .bot {
+            background: #e0f5f3;
+            margin-right: auto;
+        }
+
+        .user {
+            background: #dceaff;
+            margin-left: auto;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            padding: 14px;
+            border: 1px solid #ccd6df;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        button {
+            background: #087f8c;
+            color: white;
+            border: none;
+            padding: 13px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #05636d;
+        }
+
+        .suggestions {
+            margin-top: 20px;
+        }
+
+        .suggestions button {
+            background: #e5f1f5;
+            color: #17616b;
+            margin: 5px;
+            padding: 9px 12px;
+        }
+
+        .notice {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-top: 18px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 18px;
+            color: #087f8c;
+            text-decoration: none;
+        }
+
+        @media (max-width: 550px) {
+            .container {
+                padding: 12px;
+            }
+
+            .input-area {
+                flex-direction: column;
+            }
+
+            .chat-box {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>🩺 Medi Assist</h1>
+        <p>Your Basic Medical Information Assistant</p>
+    </div>
+
+    <div class="container">
+        <div class="chat-card">
+
+            <h2>How can I help you?</h2>
+
+            <div class="chat-box" id="chatBox" aria-live="polite">
+                <div class="message bot">
+                    Hello! 👋 I am Medi Assist.
+
+                    You can ask me about common symptoms,
+                    healthy habits, and basic first aid.
+
+                    Please remember that I provide general
+                    information, not a medical diagnosis.
+                </div>
+            </div>
+
+            <div class="input-area">
+                <input
+                    type="text"
+                    id="question"
+                    placeholder="Ask a health-related question..."
+                    aria-label="Your medical question"
+                    onkeydown="if(event.key === 'Enter') askQuestion()"
+                >
+
+                <button onclick="askQuestion()">Ask</button>
+            </div>
+
+            <div class="suggestions">
+                <strong>Try asking:</strong><br>
+
+                <button onclick="quickAsk('What is fever?')">
+                    What is fever?
+                </button>
+
+                <button onclick="quickAsk('How can I stay healthy?')">
+                    Healthy habits
+                </button>
+
+                <button onclick="quickAsk('What should I do for a minor burn?')">
+                    Minor burn first aid
+                </button>
+
+                <button onclick="quickAsk('How can I sleep better?')">
+                    Better sleep
+                </button>
+            </div>
+
+            <p class="notice">
+                Disclaimer: Medi Assist provides basic educational
+                information only. It cannot diagnose diseases or
+                prescribe medicines. For severe symptoms or emergencies,
+                seek immediate medical attention.
+            </p>
+
+            <a href="/" class="back-link">← Back to Dashboard</a>
+
+        </div>
+    </div>
+
+    <script>
+        const medicalAnswers = [
+            {
+                keywords: ["fever", "temperature", "pyrexia"],
+                answer:
+                    "Fever is a temporary rise in body temperature and can occur with infections or other conditions.\n\n" +
+                    "What you can do: Rest, drink fluids, and monitor your temperature. Seek medical advice if the fever persists, worsens, or concerns you. A baby under 3 months with a temperature of 38°C (100.4°F) or higher needs urgent medical assessment."
+            },
+            {
+                keywords: ["headache", "head pain"],
+                answer:
+                    "Headaches can have several causes, including dehydration, stress, or lack of sleep.\n\n" +
+                    "Try resting in a quiet place and drinking water. A sudden, extremely severe headache, or a headache with weakness, confusion, or difficulty speaking, requires emergency medical attention."
+            },
+            {
+                keywords: ["cold", "runny nose", "sneezing"],
+                answer:
+                    "A common cold is usually caused by a virus. Symptoms may include a runny nose, sneezing, sore throat, and cough.\n\n" +
+                    "Rest, drink fluids, and practise good hand hygiene. Seek medical advice if symptoms become severe, breathing becomes difficult, or you are getting worse."
+            },
+            {
+                keywords: ["cough"],
+                answer:
+                    "Coughing can occur with colds, allergies, and other respiratory conditions.\n\n" +
+                    "Drink fluids and avoid smoke or other irritants. Seek urgent help for difficulty breathing, blue lips, or severe chest pain. If the cough persists or worsens, consult a healthcare professional."
+            },
+            {
+                keywords: ["healthy food", "healthy diet", "balanced diet", "nutrition"],
+                answer:
+                    "A balanced diet includes vegetables, fruits, whole grains, protein sources such as beans or eggs, and suitable amounts of healthy fats.\n\n" +
+                    "Choose a variety of foods and drink enough water. Individual dietary needs may differ because of medical conditions or allergies."
+            },
+            {
+                keywords: ["sleep", "insomnia", "sleep better"],
+                answer:
+                    "To support better sleep, try keeping a regular sleep schedule, reducing screen use before bedtime, and making your bedroom quiet and comfortable.\n\n" +
+                    "If sleep problems continue or affect your daily activities, consider speaking with a healthcare professional."
+            },
+            {
+                keywords: ["exercise", "physical activity", "fitness"],
+                answer:
+                    "Regular physical activity can support heart health, strength, mood, and general wellbeing.\n\n" +
+                    "Choose an activity suitable for your age and health, begin gradually, and increase activity as tolerated. Ask a healthcare professional for guidance if you have a condition that affects exercise."
+            },
+            {
+                keywords: ["water", "hydration", "dehydration"],
+                answer:
+                    "Drinking enough fluids helps maintain hydration. Needs vary with weather, activity, age, and health conditions.\n\n" +
+                    "Thirst and urine colour can provide clues about hydration, but they are not perfect measures. Follow your clinician's fluid advice if you have heart or kidney problems."
+            },
+            {
+                keywords: ["minor burn", "small burn", "burn first aid"],
+                answer:
+                    "For a minor thermal burn, cool the area under cool running water for 20 minutes. Remove nearby jewellery or clothing unless stuck to the skin. Do not apply ice, butter, or toothpaste.\n\n" +
+                    "Cover loosely with a clean, non-fluffy dressing. Seek medical care for large, deep, chemical, or electrical burns, or burns affecting the face, hands, genitals, or major joints."
+            },
+            {
+                keywords: ["first aid", "emergency"],
+                answer:
+                    "For a serious injury or medical emergency, contact your local emergency service immediately. In India, dial 112.\n\n" +
+                    "If someone is unconscious and not breathing normally, call for emergency help and follow the dispatcher's CPR instructions. Do not delay emergency care to use this chatbot."
+            },
+            {
+                keywords: ["heart attack", "chest pain", "stroke", "can't breathe", "cannot breathe", "difficulty breathing"],
+                answer:
+                    "⚠️ These symptoms may indicate a medical emergency. Call 112 in India or your local emergency number now. Do not wait for an online answer. Follow the emergency dispatcher's instructions."
+            },
+            {
+                keywords: ["medicine", "medication", "tablet", "antibiotic"],
+                answer:
+                    "Medicines have different uses, doses, side effects, and precautions. The right choice depends on the person and the condition.\n\n" +
+                    "Do not start antibiotics or change a prescribed dose based only on chatbot information. Ask a doctor or pharmacist about a specific medicine."
+            },
+            {
+                keywords: ["diabetes", "blood sugar"],
+                answer:
+                    "Diabetes is a condition in which blood glucose levels are too high. Management may include monitoring, suitable nutrition, physical activity, and prescribed treatment.\n\n" +
+                    "Treatment must be individualised by a healthcare professional. If a person with diabetes becomes unconscious or has a severe episode, seek emergency help."
+            },
+            {
+                keywords: ["blood pressure", "hypertension"],
+                answer:
+                    "Blood pressure measures the force of blood against artery walls. Both high and low readings need to be interpreted in context.\n\n" +
+                    "One reading alone may not establish a diagnosis. If you have repeated unusual readings or symptoms such as dizziness, consult a healthcare professional."
+            },
+            {
+                keywords: ["stomach pain", "abdominal pain", "stomach ache"],
+                answer:
+                    "Stomach pain can have many causes, ranging from indigestion to conditions that need urgent treatment.\n\n" +
+                    "Seek urgent medical care for severe or worsening pain, fainting, blood in vomit or stool, or pain accompanied by a rigid abdomen."
+            },
+            {
+                keywords: ["thank you", "thanks"],
+                answer:
+                    "You're welcome! 😊 I can provide basic health information. For personal medical advice, please consult a qualified healthcare professional."
+            },
+            {
+                keywords: ["hello", "hi", "hey"],
+                answer:
+                    "Hello! 👋 Welcome to Medi Assist. You can ask me about common symptoms, healthy habits, or basic first aid."
+            }
+        ];
+
+        function addMessage(text, type) {
+            const chatBox = document.getElementById("chatBox");
+            const message = document.createElement("div");
+
+            message.className = "message " + type;
+            message.textContent = text;
+
+            chatBox.appendChild(message);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function findAnswer(question) {
+            const normalised = question.toLowerCase().trim();
+
+            for (const item of medicalAnswers) {
+                if (item.keywords.some(keyword =>
+                    normalised.includes(keyword)
+                )) {
+                    return item.answer;
+                }
+            }
+
+            return "I don't have a verified answer for that question in my current medical information library.\n\n" +
+                   "Please consult a qualified healthcare professional for reliable advice. " +
+                   "You can also ask me about fever, headache, common cold, cough, healthy food, sleep, exercise, or basic first aid.";
+        }
+
+        function askQuestion() {
+            const input = document.getElementById("question");
+            const question = input.value.trim();
+
+            if (!question) {
+                return;
+            }
+
+            addMessage(question, "user");
+            input.value = "";
+
+            const answer = findAnswer(question);
+
+            setTimeout(() => {
+                addMessage(answer, "bot");
+            }, 250);
+        }
+
+        function quickAsk(question) {
+            document.getElementById("question").value = question;
+            askQuestion();
+        }
+    </script>
+
+</body>
+</html>

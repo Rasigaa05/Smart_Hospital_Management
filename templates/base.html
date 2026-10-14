@@ -95,6 +95,33 @@
         </main>
 
     </div>
+<!-- Medi Assist Floating Button -->
+<a href="{{ url_for('medi_assist') }}" class="medi-assist-floating">
+    🩺 Medi Assist
+</a>
 
+<style>
+    .medi-assist-floating {
+        position: fixed;
+        right: 25px;
+        bottom: 25px;
+        background: #087f8c;
+        color: white;
+        padding: 14px 22px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+        transition: 0.3s ease;
+    }
+
+    .medi-assist-floating:hover {
+        background: #05636d;
+        color: white;
+        transform: translateY(-3px);
+    }
+</style>
 </body>
 </html>
