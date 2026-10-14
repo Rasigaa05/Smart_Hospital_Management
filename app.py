@@ -1312,7 +1312,7 @@ def delete_bed(bed_id):
 @app.route("/medi_assist")
 @login_required
 def medi_assist():
-    return render_template("medi_assist.html")
+    return render_template("Medi_Assist.html")
 
 
 
