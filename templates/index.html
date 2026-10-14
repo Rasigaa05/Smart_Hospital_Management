@@ -122,6 +122,94 @@
 </div>
 
 </section>
+<!-- Pharmacy Alerts -->
+<div class="row mt-4">
+
+    <!-- Low Stock Alert -->
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">⚠️ Low Stock Medicines</h5>
+            </div>
+
+            <div class="card-body">
+                {% if low_stock_medicines %}
+                    {% for medicine in low_stock_medicines %}
+                    <div class="border-bottom py-2">
+                        <strong>{{ medicine.medicine_name }}</strong>
+                        <br>
+                        <small>
+                            Available: {{ medicine.quantity }}
+                            | Minimum: {{ medicine.minimum_stock }}
+                        </small>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-success mb-0">
+                        All medicine stocks are sufficient.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Expired Medicine Alert -->
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">Expired Medicines</h5>
+            </div>
+
+            <div class="card-body">
+                {% if expired_medicines %}
+                    {% for medicine in expired_medicines %}
+                    <div class="border-bottom py-2">
+                        <strong>{{ medicine.medicine_name }}</strong>
+                        <br>
+                        <small>
+                            Expiry: {{ medicine.expiry_date }}
+                            | Quantity: {{ medicine.quantity }}
+                        </small>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-success mb-0">
+                        No expired medicines found.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Expiring Soon Alert -->
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-info text-dark">
+                <h5 class="mb-0">Expiring Within 30 Days</h5>
+            </div>
+
+            <div class="card-body">
+                {% if expiring_soon_medicines %}
+                    {% for medicine in expiring_soon_medicines %}
+                    <div class="border-bottom py-2">
+                        <strong>{{ medicine.medicine_name }}</strong>
+                        <br>
+                        <small>
+                            Expiry: {{ medicine.expiry_date }}
+                            | Quantity: {{ medicine.quantity }}
+                        </small>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-success mb-0">
+                        No medicines expiring within 30 days.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
 
 <!-- Upcoming Appointments -->
 

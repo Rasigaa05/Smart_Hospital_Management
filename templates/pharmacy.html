@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Medicine & Pharmacy Management</h2>
+            <p class="text-muted">
+                Manage medicine inventory, expiry dates, and stock levels.
+            </p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm p-3">
+                <h6>Total Medicines</h6>
+                <h3>{{ total_medicines }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm p-3">
+                <h6>Low Stock Medicines</h6>
+                <h3 class="text-warning">{{ low_stock_count }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm p-3">
+                <h6>Expired Medicines</h6>
+                <h3 class="text-danger">{{ expired_count }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Add New Medicine</h5>
+        </div>
+
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('add_medicine') }}">
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Medicine Name</label>
+                        <input type="text" name="medicine_name"
+                               class="form-control" required>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Category</label>
+                        <input type="text" name="category"
+                               class="form-control" required>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Batch Number</label>
+                        <input type="text" name="batch_number"
+                               class="form-control" required>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" name="quantity"
+                               class="form-control" min="0" required>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Minimum Stock</label>
+                        <input type="number" name="minimum_stock"
+                               class="form-control" min="0" value="10" required>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Price per Unit</label>
+                        <input type="number" name="price"
+                               class="form-control" min="0" step="0.01" required>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Expiry Date</label>
+                        <input type="date" name="expiry_date"
+                               class="form-control" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+    <label class="form-label">Supplier</label>
+
+    <select name="supplier_id" class="form-select">
+        <option value="">Select Supplier</option>
+
+        {% for supplier in suppliers %}
+        <option value="{{ supplier.id }}">
+            {{ supplier.supplier_name }}
+        </option>
+        {% endfor %}
+    </select>
+</div>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Add Medicine
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">Medicine Inventory</h5>
+        </div>
+
+        <div class="card-body table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Category</th>
+                        <th>Batch No.</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Expiry Date</th>
+                        <th>Supplier</th>
+                        <th>Stock Status</th>
+                        <th>Update Stock</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for medicine in medicines %}
+                    <tr>
+                        <td>{{ medicine.medicine_name }}</td>
+                        <td>{{ medicine.category }}</td>
+                        <td>{{ medicine.batch_number }}</td>
+                        <td>{{ medicine.quantity }}</td>
+                        <td>₹{{ "%.2f"|format(medicine.price) }}</td>
+                        <td>{{ medicine.expiry_date }}</td>
+                        <td>{{ medicine.supplier_name or "Not Assigned" }}</td>
+                        <td>
+                            <td>
+    {% if medicine.expiry_date >= today %}
+    <form method="POST"
+          action="{{ url_for('update_medicine_stock', medicine_id=medicine.id) }}"
+          class="d-flex gap-2">
+
+        <input type="number"
+               name="quantity"
+               min="0"
+               value="{{ medicine.quantity }}"
+               class="form-control form-control-sm"
+               required>
+
+        <button type="submit" class="btn btn-sm btn-primary">
+            Update
+        </button>
+    </form>
+    {% else %}
+    <span class="text-danger">Expired</span>
+    {% endif %}
+</td>
+                            {% if medicine.expiry_date < today %}
+                                <span class="badge bg-danger">Expired</span>
+                            {% elif medicine.quantity <= medicine.minimum_stock %}
+                                <span class="badge bg-warning text-dark">Low Stock</span>
+                            {% else %}
+                                <span class="badge bg-success">Available</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center">
+                            No medicines added yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

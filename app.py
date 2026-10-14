@@ -2,6 +2,7 @@ import os
 import sqlite3
 from functools import wraps
 from pathlib import Path
+from flask import request, redirect, url_for, render_template
 from datetime import date, datetime
 from flask import (
     Flask,
@@ -116,6 +117,33 @@ def initialize_database():
                 total_amount REAL NOT NULL DEFAULT 0,
                 payment_status TEXT NOT NULL DEFAULT 'Unpaid',
                 bill_date TEXT NOT NULL
+            )
+        """)
+                # Suppliers table
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS suppliers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                supplier_name TEXT NOT NULL,
+                phone TEXT NOT NULL,
+                email TEXT,
+                address TEXT
+            )
+        """)
+
+        # Medicines table
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS medicines (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                medicine_name TEXT NOT NULL,
+                category TEXT NOT NULL,
+                batch_number TEXT NOT NULL,
+                quantity INTEGER NOT NULL DEFAULT 0,
+                minimum_stock INTEGER NOT NULL DEFAULT 10,
+                price REAL NOT NULL DEFAULT 0,
+                expiry_date TEXT NOT NULL,
+                supplier_id INTEGER,
+                FOREIGN KEY (supplier_id)
+                    REFERENCES suppliers(id)
             )
         """)
 
@@ -1313,6 +1341,269 @@ def delete_bed(bed_id):
 @login_required
 def medi_assist():
     return render_template("Medi_Assist.html")
+# ================= PHARMACY MANAGEMENT =================
+
+@app.route("/pharmacy")
+@login_required
+def pharmacy():
+    conn = get_db_connection()
+
+    medicines = conn.execute("""
+        SELECT medicines.*, suppliers.supplier_name
+        FROM medicines
+        LEFT JOIN suppliers
+        ON medicines.supplier_id = suppliers.id
+        ORDER BY medicines.medicine_name
+    """).fetchall()
+    supplier_list = conn.execute("""
+    SELECT id, supplier_name
+    FROM suppliers
+    ORDER BY supplier_name
+""").fetchall()
+
+    today = date.today().isoformat()
+
+    total_medicines = conn.execute("""
+        SELECT COUNT(*) AS total
+        FROM medicines
+    """).fetchone()["total"]
+
+    low_stock_count = conn.execute("""
+        SELECT COUNT(*) AS total
+        FROM medicines
+        WHERE quantity <= minimum_stock
+        AND expiry_date >= ?
+    """, (today,)).fetchone()["total"]
+
+    expired_count = conn.execute("""
+        SELECT COUNT(*) AS total
+        FROM medicines
+        WHERE expiry_date < ?
+    """, (today,)).fetchone()["total"]
+
+    conn.close()
+
+    return render_template(
+        "pharmacy.html",
+        medicines=medicines,
+        suppliers=supplier_list,
+        total_medicines=total_medicines,
+        low_stock_count=low_stock_count,
+        expired_count=expired_count,
+        today=today
+    )
+
+@app.route("/add_medicine", methods=["POST"])
+@login_required
+def add_medicine():
+    medicine_name = request.form.get("medicine_name", "").strip()
+    category = request.form.get("category", "").strip()
+    batch_number = request.form.get("batch_number", "").strip()
+    expiry_date = request.form.get("expiry_date", "").strip()
+    supplier_value = request.form.get("supplier_id", "").strip()
+
+    try:
+        quantity = int(request.form.get("quantity", ""))
+        minimum_stock = int(request.form.get("minimum_stock", ""))
+        price = float(request.form.get("price", ""))
+
+        if not medicine_name or not category or not batch_number:
+            raise ValueError
+
+        if quantity < 0 or minimum_stock < 0 or price < 0:
+            raise ValueError
+
+        # Validate expiry date
+        datetime.strptime(expiry_date, "%Y-%m-%d")
+
+    except (ValueError, TypeError):
+        return (
+            "Invalid medicine details. Check the quantity, price, "
+            "minimum stock, and expiry date.",
+            400
+        )
+
+    # Validate supplier selection separately
+    try:
+        supplier_id = int(supplier_value) if supplier_value else None
+    except ValueError:
+        return "Invalid supplier selection.", 400
+
+    conn = get_db_connection()
+
+    try:
+        if supplier_id is not None:
+            supplier = conn.execute(
+                "SELECT id FROM suppliers WHERE id = ?",
+                (supplier_id,)
+            ).fetchone()
+
+            if supplier is None:
+                return "Selected supplier does not exist.", 400
+
+        conn.execute("""
+            INSERT INTO medicines (
+                medicine_name,
+                category,
+                batch_number,
+                quantity,
+                minimum_stock,
+                price,
+                expiry_date,
+                supplier_id
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            medicine_name,
+            category,
+            batch_number,
+            quantity,
+            minimum_stock,
+            price,
+            expiry_date,
+            supplier_id
+        ))
+
+        conn.commit()
+
+    finally:
+        conn.close()
+
+    return redirect(url_for("pharmacy"))
+# ================= SUPPLIER MANAGEMENT =================
+
+@app.route("/suppliers", methods=["GET", "POST"])
+@login_required
+def suppliers():
+    conn = get_db_connection()
+
+    if request.method == "POST":
+        supplier_name = request.form.get("supplier_name", "").strip()
+        phone = request.form.get("phone", "").strip()
+        email = request.form.get("email", "").strip()
+        address = request.form.get("address", "").strip()
+
+        if not supplier_name or not phone:
+            conn.close()
+            return "Supplier name and phone number are required.", 400
+
+        try:
+            conn.execute("""
+                INSERT INTO suppliers (
+                    supplier_name, phone, email, address
+                )
+                VALUES (?, ?, ?, ?)
+            """, (supplier_name, phone, email, address))
+
+            conn.commit()
+
+        finally:
+            conn.close()
+
+        return redirect(url_for("suppliers"))
+
+    supplier_list = conn.execute("""
+        SELECT *
+        FROM suppliers
+        ORDER BY supplier_name
+    """).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "suppliers.html",
+        suppliers=supplier_list
+    )
+# ================= UPDATE MEDICINE STOCK =================
+
+@app.route("/update_medicine_stock/<int:medicine_id>", methods=["POST"])
+@login_required
+def update_medicine_stock(medicine_id):
+    quantity_value = request.form.get("quantity", "").strip()
+
+    try:
+        quantity = int(quantity_value)
+
+        if quantity < 0:
+            raise ValueError
+
+    except ValueError:
+        return "Invalid quantity. Enter zero or a positive number.", 400
+
+    conn = get_db_connection()
+
+    try:
+        medicine = conn.execute(
+            "SELECT id FROM medicines WHERE id = ?",
+            (medicine_id,)
+        ).fetchone()
+
+        if medicine is None:
+            return "Medicine not found.", 404
+
+        conn.execute(
+            "UPDATE medicines SET quantity = ? WHERE id = ?",
+            (quantity, medicine_id)
+        )
+
+        conn.commit()
+
+    finally:
+        conn.close()
+
+    return redirect(url_for("pharmacy"))
+# ================= INVENTORY REPORT =================
+
+@app.route("/inventory_report")
+@login_required
+def inventory_report():
+    conn = get_db_connection()
+
+    medicines = conn.execute("""
+        SELECT medicines.*, suppliers.supplier_name
+        FROM medicines
+        LEFT JOIN suppliers
+        ON medicines.supplier_id = suppliers.id
+        ORDER BY medicines.expiry_date
+    """).fetchall()
+
+    today = date.today().isoformat()
+
+    total_medicines = conn.execute("""
+        SELECT COUNT(*) AS total
+        FROM medicines
+    """).fetchone()["total"]
+
+    total_units = conn.execute("""
+        SELECT COALESCE(SUM(quantity), 0) AS total
+        FROM medicines
+        WHERE expiry_date >= ?
+    """, (today,)).fetchone()["total"]
+
+    low_stock_count = conn.execute("""
+        SELECT COUNT(*) AS total
+        FROM medicines
+        WHERE quantity <= minimum_stock
+        AND expiry_date >= ?
+    """, (today,)).fetchone()["total"]
+
+    expired_count = conn.execute("""
+        SELECT COUNT(*) AS total
+        FROM medicines
+        WHERE expiry_date < ?
+    """, (today,)).fetchone()["total"]
+
+    conn.close()
+
+    return render_template(
+        "inventory_report.html",
+        medicines=medicines,
+        total_medicines=total_medicines,
+        total_units=total_units,
+        low_stock_count=low_stock_count,
+        expired_count=expired_count,
+        today=today
+    )
 
 
 

@@ -3,365 +3,433 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Medi Assist | SmartCare Hospital</title>
-
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
+        * { box-sizing: border-box; }
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f1f6fb;
-            color: #243447;
+            margin: 0; font-family: Arial, sans-serif;
+            background: #f1f6fb; color: #243447;
         }
-
         .header {
-            background: #087f8c;
-            color: white;
-            padding: 22px;
-            text-align: center;
+            background: linear-gradient(135deg, #087f8c, #075e75);
+            color: white; padding: 22px; text-align: center;
         }
-
-        .header h1 {
-            margin: 0 0 8px;
-        }
-
-        .container {
-            max-width: 850px;
-            margin: 30px auto;
-            padding: 20px;
-        }
-
+        .header h1 { margin: 0 0 8px; }
+        .container { max-width: 900px; margin: 25px auto; padding: 16px; }
         .chat-card {
-            background: white;
-            border-radius: 14px;
-            padding: 22px;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+            background: white; border-radius: 14px; padding: 22px;
+            box-shadow: 0 4px 18px rgba(0,0,0,.08);
         }
-
+        .top-controls {
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 12px; flex-wrap: wrap; margin-bottom: 15px;
+        }
+        .language-control { display: flex; align-items: center; gap: 8px; }
+        select {
+            padding: 10px; border: 1px solid #ccd6df; border-radius: 8px;
+            background: white; color: #243447; font-size: 14px;
+        }
+        .badge {
+            display: inline-block; background: #e0f5f3; color: #17616b;
+            padding: 7px 10px; border-radius: 20px; font-size: 12px; font-weight: bold;
+        }
         .chat-box {
-            height: 380px;
-            overflow-y: auto;
-            padding: 15px;
-            background: #f8fafc;
-            border: 1px solid #e0e8ef;
-            border-radius: 10px;
+            height: 390px; overflow-y: auto; padding: 15px;
+            background: #f8fafc; border: 1px solid #e0e8ef; border-radius: 10px;
         }
-
         .message {
-            padding: 12px 15px;
-            margin: 10px 0;
-            border-radius: 12px;
-            max-width: 85%;
-            line-height: 1.6;
-            white-space: pre-wrap;
+            padding: 12px 15px; margin: 10px 0; border-radius: 12px;
+            max-width: 88%; line-height: 1.6; white-space: pre-wrap;
             overflow-wrap: anywhere;
         }
-
-        .bot {
-            background: #e0f5f3;
-            margin-right: auto;
-        }
-
-        .user {
-            background: #dceaff;
-            margin-left: auto;
-        }
-
-        .input-area {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
+        .bot { background: #e0f5f3; margin-right: auto; }
+        .user { background: #dceaff; margin-left: auto; }
+        .input-area { display: flex; gap: 10px; margin-top: 15px; }
+        .voice-controls { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .voice-controls button { background: #155e75; }
+        .voice-controls button.stop-voice { background: #64748b; }
+        .message .speak-button { display: block; margin-top: 8px; padding: 6px 10px; font-size: 12px; background: #17616b; }
+        .voice-status { color: #17616b; font-size: 12px; margin: 8px 0 0; min-height: 18px; }
         input {
-            flex: 1;
-            min-width: 0;
-            padding: 14px;
-            border: 1px solid #ccd6df;
-            border-radius: 8px;
-            font-size: 15px;
+            flex: 1; min-width: 0; padding: 14px; border: 1px solid #ccd6df;
+            border-radius: 8px; font-size: 15px;
         }
-
         button {
-            background: #087f8c;
-            color: white;
-            border: none;
-            padding: 13px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
+            background: #087f8c; color: white; border: none;
+            padding: 12px 17px; border-radius: 8px; cursor: pointer;
+            font-size: 14px; font-weight: 600;
         }
-
-        button:hover {
-            background: #05636d;
-        }
-
-        .suggestions {
-            margin-top: 20px;
-        }
-
+        button:hover { background: #05636d; }
+        button:focus, input:focus, select:focus { outline: 2px solid #79cbd0; outline-offset: 2px; }
+        .suggestions { margin-top: 20px; }
         .suggestions button {
-            background: #e5f1f5;
-            color: #17616b;
-            margin: 5px;
+            background: #e5f1f5; color: #17616b; margin: 5px 5px 5px 0;
             padding: 9px 12px;
         }
-
+        .suggestions button:hover { background: #cce8ec; }
         .notice {
-            font-size: 13px;
-            color: #6b7280;
-            line-height: 1.6;
-            margin-top: 18px;
+            font-size: 13px; color: #6b7280; line-height: 1.6; margin-top: 18px;
+            padding: 12px; background: #fff8e8; border-left: 4px solid #e8b44c;
+            border-radius: 6px;
         }
-
-        .back-link {
-            display: inline-block;
-            margin-top: 18px;
-            color: #087f8c;
-            text-decoration: none;
-        }
-
+        .back-link { display: inline-block; margin-top: 18px; color: #087f8c; text-decoration: none; }
+        .small-note { color: #667085; font-size: 12px; margin: 8px 0 0; }
         @media (max-width: 550px) {
-            .container {
-                padding: 12px;
-            }
-
-            .input-area {
-                flex-direction: column;
-            }
-
-            .chat-box {
-                height: 350px;
-            }
+            .container { padding: 10px; margin: 12px auto; }
+            .chat-card { padding: 14px; }
+            .input-area { flex-direction: column; }
+            .chat-box { height: 350px; }
+            .message { max-width: 96%; }
         }
     </style>
 </head>
-
 <body>
-
     <div class="header">
         <h1>🩺 Medi Assist</h1>
-        <p>Your Basic Medical Information Assistant</p>
+        <p id="subtitle">Your multilingual health information assistant</p>
     </div>
 
     <div class="container">
         <div class="chat-card">
+            <div class="top-controls">
+                <span class="badge" id="modeBadge">GENERAL HEALTH INFORMATION</span>
+                <label class="language-control" for="language">
+                    <strong id="languageLabel">Language:</strong>
+                    <select id="language" onchange="changeLanguage()">
+                        <option value="en">English</option>
+                        <option value="ta">தமிழ் (Tamil)</option>
+                        <option value="th">Thanglish</option>
+                    </select>
+                </label>
+            </div>
 
-            <h2>How can I help you?</h2>
+            <h2 id="mainHeading">How can I help you?</h2>
+            <div class="chat-box" id="chatBox" aria-live="polite" aria-label="Chat conversation">
+                <div class="message bot" id="welcomeMessage">Hello! 👋 I am Medi Assist.
+You can ask about common symptoms, healthy habits, and basic first aid.
 
-            <div class="chat-box" id="chatBox" aria-live="polite">
-                <div class="message bot">
-                    Hello! 👋 I am Medi Assist.
-
-                    You can ask me about common symptoms,
-                    healthy habits, and basic first aid.
-
-                    Please remember that I provide general
-                    information, not a medical diagnosis.
-                </div>
+I provide general educational information only—not a diagnosis or a prescription.</div>
             </div>
 
             <div class="input-area">
-                <input
-                    type="text"
-                    id="question"
-                    placeholder="Ask a health-related question..."
-                    aria-label="Your medical question"
-                    onkeydown="if(event.key === 'Enter') askQuestion()"
-                >
-
-                <button onclick="askQuestion()">Ask</button>
+                <input type="text" id="question" placeholder="Ask a health-related question..." aria-label="Your medical question">
+                <button id="askButton" onclick="askQuestion()">Ask</button>
             </div>
+            <div class="voice-controls">
+                <button type="button" id="voiceInputButton" onclick="startVoiceInput()">🎤 Speak your question</button>
+                <button type="button" id="stopVoiceButton" class="stop-voice" onclick="stopVoice()">⏹ Stop voice</button>
+            </div>
+            <p class="voice-status" id="voiceStatus" aria-live="polite">Voice input depends on browser support and microphone permission.</p>
 
             <div class="suggestions">
-                <strong>Try asking:</strong><br>
-
-                <button onclick="quickAsk('What is fever?')">
-                    What is fever?
-                </button>
-
-                <button onclick="quickAsk('How can I stay healthy?')">
-                    Healthy habits
-                </button>
-
-                <button onclick="quickAsk('What should I do for a minor burn?')">
-                    Minor burn first aid
-                </button>
-
-                <button onclick="quickAsk('How can I sleep better?')">
-                    Better sleep
-                </button>
+                <strong id="tryLabel">Try asking:</strong><br>
+                <button onclick="quickAsk('What should I do for a fever?')" id="suggestFever">Fever guidance</button>
+                <button onclick="startSymptomGuide()" id="suggestSymptoms">Guide me through my symptoms</button>
+                <button onclick="quickAsk('How can I stay healthy?')" id="suggestHealthy">Healthy habits</button>
+                <button onclick="quickAsk('What should I do for a minor burn?')" id="suggestBurn">Minor burn first aid</button>
+                <button onclick="quickAsk('How can I sleep better?')" id="suggestSleep">Better sleep</button>
             </div>
-
-            <p class="notice">
-                Disclaimer: Medi Assist provides basic educational
-                information only. It cannot diagnose diseases or
-                prescribe medicines. For severe symptoms or emergencies,
-                seek immediate medical attention.
-            </p>
-
-            <a href="/" class="back-link">← Back to Dashboard</a>
-
+            <p class="small-note" id="smallNote">For personal advice, contact a qualified healthcare professional.</p>
+            <p class="notice" id="disclaimer">Safety notice: Medi Assist cannot diagnose conditions or prescribe medicines. If symptoms may be severe or life-threatening, contact emergency services immediately. In India, call 112.</p>
+            <a href="/" class="back-link" id="backLink">← Back to Dashboard</a>
         </div>
     </div>
 
     <script>
-        const medicalAnswers = [
-            {
-                keywords: ["fever", "temperature", "pyrexia"],
-                answer:
-                    "Fever is a temporary rise in body temperature and can occur with infections or other conditions.\n\n" +
-                    "What you can do: Rest, drink fluids, and monitor your temperature. Seek medical advice if the fever persists, worsens, or concerns you. A baby under 3 months with a temperature of 38°C (100.4°F) or higher needs urgent medical assessment."
+        const languageText = {
+            en: {
+                subtitle: "Your multilingual health information assistant",
+                language: "Language:", heading: "How can I help you?", ask: "Ask",
+                placeholder: "Ask a health-related question...", try: "Try asking:",
+                fever: "Fever guidance", symptoms: "Guide me through my symptoms",
+                healthy: "Healthy habits", burn: "Minor burn first aid", sleep: "Better sleep",
+                note: "For personal advice, contact a qualified healthcare professional.",
+                disclaimer: "Safety notice: Medi Assist cannot diagnose conditions or prescribe medicines. If symptoms may be severe or life-threatening, contact emergency services immediately. In India, call 112.",
+                welcome: "Hello! 👋 I am Medi Assist.\nYou can ask about common symptoms, healthy habits, and basic first aid.\n\nI provide general educational information only—not a diagnosis or a prescription.",
+                empty: "Please type a question first.",
+                feverAnswer: "Fever can happen for many reasons, including infections. Rest, drink fluids if you can, and monitor your temperature. Seek medical advice if it persists, worsens, or worries you. A baby under 3 months with a temperature of 38°C (100.4°F) or higher needs urgent medical assessment.",
+                headache: "Headaches have many possible causes. Rest in a quiet place and drink water if appropriate. A sudden, extremely severe headache, or headache with weakness, confusion, fainting, or difficulty speaking needs emergency medical attention.",
+                cold: "A common cold is usually caused by a virus. Rest, drink fluids, and practise hand hygiene. Seek medical advice if symptoms worsen; get urgent help for breathing difficulty.",
+                cough: "Cough can occur with infections, allergies, or other conditions. Drink fluids and avoid smoke or irritants. Seek urgent help for difficulty breathing, blue lips, or severe chest pain. Consult a clinician if it persists or worsens.",
+                diet: "A balanced diet can include vegetables, fruits, whole grains, protein foods, and suitable healthy fats. Individual needs vary, especially with allergies or medical conditions.",
+                sleep: "Try a regular sleep schedule, reduce screens before bedtime, and keep your room quiet and comfortable. If sleep problems continue or affect daily life, speak with a healthcare professional.",
+                exercise: "Choose physical activity suitable for your health, start gradually, and increase as tolerated. Ask a healthcare professional for advice if you have a condition that affects exercise.",
+                water: "Fluid needs vary with weather, activity, age, and health. Drink regularly unless a clinician has advised you to limit fluids, such as for some heart or kidney conditions.",
+                burn: "For a minor heat burn, cool the area under cool running water for 20 minutes. Do not use ice, butter, or toothpaste. Cover loosely with a clean dressing. Seek medical care for large, deep, chemical, or electrical burns, or burns to the face, hands, genitals, or major joints.",
+                medicine: "I cannot recommend a medicine or dose. Do not start antibiotics or change prescribed medicines based on chatbot information. Ask a qualified doctor or pharmacist about a specific medicine.",
+                diabetes: "Diabetes requires individualised care. Follow the plan from your healthcare professional and seek their advice about monitoring, food, activity, and treatment. An unconscious person or a severe episode needs emergency help.",
+                bp: "Blood pressure readings need context; one reading alone may not establish a diagnosis. If readings are repeatedly unusual or you have dizziness or other symptoms, consult a healthcare professional.",
+                stomach: "Stomach pain has many possible causes. Seek urgent medical care for severe or worsening pain, fainting, blood in vomit or stool, or a rigid abdomen.",
+                emergency: "⚠️ These symptoms may indicate a medical emergency. Call 112 in India or your local emergency number now. Do not wait for an online answer; follow the emergency dispatcher's instructions.",
+                fallback: "I don't have a verified answer for that question in my current information library. I don't want to guess about your health. Please ask a qualified healthcare professional. You can ask me about fever, headache, cold, cough, diet, sleep, exercise, hydration, minor burns, or general first aid.",
+                hello: "Hello! 👋 I can share general information about common symptoms, healthy habits, and basic first aid.",
+                thanks: "You're welcome! 😊 Remember, I provide general information only. For personal medical advice, please consult a qualified healthcare professional.",
+                duration: "How long have you had these symptoms? For example: a few hours, 1–2 days, or longer.",
+                severity: "How severe are the symptoms: mild, moderate, or severe? If symptoms are severe, rapidly worsening, or include breathing difficulty, chest pain, confusion, fainting, or signs of stroke, seek emergency help now.",
+                guideEnd: "Thank you. I can't diagnose the cause. Monitor your symptoms and contact a healthcare professional if they persist, worsen, or concern you. Seek urgent care for severe or sudden symptoms."
             },
-            {
-                keywords: ["headache", "head pain"],
-                answer:
-                    "Headaches can have several causes, including dehydration, stress, or lack of sleep.\n\n" +
-                    "Try resting in a quiet place and drinking water. A sudden, extremely severe headache, or a headache with weakness, confusion, or difficulty speaking, requires emergency medical attention."
+            ta: {
+                subtitle: "உடல்நலத் தகவல்களுக்கான உங்கள் உதவியாளர்",
+                language: "மொழி:", heading: "நான் எப்படி உதவலாம்?", ask: "கேள்",
+                placeholder: "உடல்நலம் பற்றிய கேள்வியை எழுதுங்கள்...", try: "இவற்றைக் கேட்கலாம்:",
+                fever: "காய்ச்சல் வழிகாட்டல்", symptoms: "அறிகுறிகளைப் பற்றி வழிகாட்டுங்கள்",
+                healthy: "ஆரோக்கியமான பழக்கங்கள்", burn: "சிறிய தீக்காய முதலுதவி", sleep: "நல்ல தூக்கம்",
+                note: "தனிப்பட்ட மருத்துவ ஆலோசனைக்கு தகுதியான மருத்துவரை அணுகவும்.",
+                disclaimer: "பாதுகாப்பு குறிப்பு: Medi Assist நோயைக் கண்டறியவோ மருந்து பரிந்துரைக்கவோ முடியாது. கடுமையான அல்லது உயிருக்கு ஆபத்தான அறிகுறிகள் இருந்தால் உடனடியாக அவசர மருத்துவ உதவியை நாடுங்கள். இந்தியாவில் 112 அழைக்கவும்.",
+                welcome: "வணக்கம்! 👋 நான் Medi Assist.\nபொதுவான அறிகுறிகள், ஆரோக்கியமான பழக்கங்கள், முதலுதவி பற்றி கேட்கலாம்.\n\nநான் பொதுவான தகவல்களை மட்டுமே வழங்குகிறேன்; நோயறிதல் அல்லது மருந்து பரிந்துரை செய்யமாட்டேன்.",
+                empty: "முதலில் உங்கள் கேள்வியை எழுதுங்கள்.",
+                feverAnswer: "தொற்று உள்ளிட்ட பல காரணங்களால் காய்ச்சல் ஏற்படலாம். ஓய்வெடுத்து, முடிந்தால் போதுமான திரவம் குடித்து, உடல் வெப்பநிலையை கவனியுங்கள். காய்ச்சல் நீடித்தால், அதிகரித்தால் அல்லது கவலை அளித்தால் மருத்துவரை அணுகவும். 3 மாதத்திற்குக் குறைவான குழந்தைக்கு 38°C அல்லது அதற்கு மேல் காய்ச்சல் இருந்தால் உடனடி மருத்துவ மதிப்பீடு தேவை.",
+                headache: "தலைவலிக்கு பல காரணங்கள் இருக்கலாம். அமைதியான இடத்தில் ஓய்வெடுத்து, உங்களுக்கு ஏற்றதாக இருந்தால் தண்ணீர் குடிக்கவும். திடீரென மிகக் கடுமையான தலைவலி அல்லது பலவீனம், குழப்பம், மயக்கம், பேசுவதில் சிரமம் இருந்தால் அவசர மருத்துவ உதவி தேவை.",
+                cold: "சாதாரண சளி பெரும்பாலும் வைரஸால் ஏற்படும். ஓய்வெடுக்கவும், திரவம் குடிக்கவும், கைகளை சுத்தமாக வைத்திருக்கவும். அறிகுறிகள் அதிகரித்தால் மருத்துவரை அணுகவும்; மூச்சுத் திணறல் இருந்தால் உடனடி உதவி பெறவும்.",
+                cough: "இருமல் தொற்று, ஒவ்வாமை அல்லது பிற காரணங்களால் ஏற்படலாம். திரவம் குடித்து புகை போன்ற எரிச்சலூட்டிகளைத் தவிர்க்கவும். மூச்சுத் திணறல், உதடு நீலமாகுதல் அல்லது கடுமையான மார்பு வலி இருந்தால் அவசர உதவி பெறவும்.",
+                diet: "சமநிலையான உணவில் காய்கறிகள், பழங்கள், முழுத் தானியங்கள், புரத உணவுகள் மற்றும் ஏற்ற அளவு நல்ல கொழுப்புகள் இருக்கலாம். உடல்நிலை மற்றும் ஒவ்வாமைக்கு ஏற்ப தேவைகள் மாறுபடும்.",
+                sleep: "தினமும் ஒரே நேரத்தில் தூங்கவும் எழவும் முயற்சி செய்யுங்கள்; தூங்குவதற்கு முன் திரை பயன்பாட்டைக் குறைத்து அமைதியான அறையை வைத்திருங்கள். தூக்கப் பிரச்சினை நீடித்தால் மருத்துவரிடம் பேசுங்கள்.",
+                exercise: "உங்கள் உடல்நிலைக்கு ஏற்ற உடற்பயிற்சியை மெதுவாகத் தொடங்குங்கள். உடற்பயிற்சியை பாதிக்கும் உடல்நிலை இருந்தால் மருத்துவரின் ஆலோசனையைப் பெறுங்கள்.",
+                water: "தண்ணீர் தேவைகள் வானிலை, செயல்பாடு, வயது மற்றும் உடல்நிலையைப் பொறுத்து மாறும். மருத்துவர் திரவத்தை குறைக்கச் சொல்லியிருந்தால் அவரின் அறிவுரையைப் பின்பற்றவும்.",
+                burn: "சிறிய வெப்பத் தீக்காயத்தை குளிர்ந்த ஓடும் நீரில் 20 நிமிடங்கள் குளிர்விக்கவும். ஐஸ், வெண்ணெய் அல்லது பற்பசை தடவ வேண்டாம். சுத்தமான கட்டுப்பட்டியால் மெதுவாக மூடவும். பெரிய, ஆழமான, ரசாயன அல்லது மின்சாரத் தீக்காயங்களுக்கு மருத்துவ உதவி பெறவும்.",
+                medicine: "எந்த மருந்து அல்லது அளவை எடுத்துக்கொள்ள வேண்டும் என்று நான் பரிந்துரைக்க முடியாது. மருத்துவரின் ஆலோசனையின்றி ஆன்டிபயாட்டிக் தொடங்கவோ மருந்தளவை மாற்றவோ வேண்டாம். மருத்துவர் அல்லது மருந்தாளரிடம் கேளுங்கள்.",
+                diabetes: "நீரிழிவு நோய்க்கான பராமரிப்பு ஒவ்வொருவருக்கும் மாறுபடும். உணவு, உடற்பயிற்சி, பரிசோதனை மற்றும் சிகிச்சை குறித்து உங்கள் மருத்துவரின் திட்டத்தைப் பின்பற்றவும். மயக்கமடைதல் அல்லது கடுமையான நிலை ஏற்பட்டால் அவசர உதவி பெறவும்.",
+                bp: "ரத்த அழுத்த அளவை உடல்நிலையுடன் சேர்த்தே புரிந்துகொள்ள வேண்டும். தொடர்ந்து அசாதாரண அளவுகள் வந்தாலோ தலைசுற்றல் போன்ற அறிகுறிகள் இருந்தாலோ மருத்துவரை அணுகவும்.",
+                stomach: "வயிற்று வலிக்கு பல காரணங்கள் இருக்கலாம். கடுமையான அல்லது அதிகரிக்கும் வலி, மயக்கம், வாந்தி அல்லது மலத்தில் ரத்தம், வயிறு கடினமாக இருப்பது போன்றவை இருந்தால் உடனடி மருத்துவ உதவி பெறவும்.",
+                emergency: "⚠️ இவை அவசர மருத்துவ நிலையின் அறிகுறிகளாக இருக்கலாம். இந்தியாவில் 112 அல்லது உங்கள் உள்ளூர் அவசர எண்ணை உடனே அழைக்கவும். ஆன்லைன் பதிலுக்காக காத்திருக்க வேண்டாம்.",
+                fallback: "இந்தக் கேள்விக்கு என்னிடம் சரிபார்க்கப்பட்ட தகவல் இல்லை; உங்கள் உடல்நலம் குறித்து ஊகிக்க விரும்பவில்லை. தகுதியான மருத்துவரை அணுகவும். காய்ச்சல், தலைவலி, சளி, இருமல், உணவு, தூக்கம், உடற்பயிற்சி, நீர்ச்சத்து அல்லது முதலுதவி பற்றி கேட்கலாம்.",
+                hello: "வணக்கம்! 👋 பொதுவான அறிகுறிகள், ஆரோக்கியமான பழக்கங்கள் மற்றும் முதலுதவி பற்றிய தகவல்களை வழங்க முடியும்.",
+                thanks: "வரவேற்கிறேன்! 😊 நான் பொதுவான தகவல்களை மட்டுமே வழங்குகிறேன். தனிப்பட்ட மருத்துவ ஆலோசனைக்கு மருத்துவரை அணுகவும்.",
+                duration: "இந்த அறிகுறிகள் எவ்வளவு நேரமாக இருக்கின்றன? சில மணி நேரமா, 1–2 நாட்களா அல்லது அதற்கு மேலா?",
+                severity: "அறிகுறிகள் லேசானதா, மிதமானதா அல்லது கடுமையானதா? கடுமையான அல்லது வேகமாக அதிகரிக்கும் அறிகுறிகள், மூச்சுத் திணறல், மார்பு வலி, குழப்பம், மயக்கம் இருந்தால் உடனடியாக அவசர உதவி பெறவும்.",
+                guideEnd: "நன்றி. இதன் காரணத்தை நான் கண்டறிய முடியாது. அறிகுறிகள் நீடித்தாலோ அதிகரித்தாலோ மருத்துவரை அணுகவும். திடீர் அல்லது கடுமையான அறிகுறிகளுக்கு உடனடி உதவி பெறவும்."
             },
-            {
-                keywords: ["cold", "runny nose", "sneezing"],
-                answer:
-                    "A common cold is usually caused by a virus. Symptoms may include a runny nose, sneezing, sore throat, and cough.\n\n" +
-                    "Rest, drink fluids, and practise good hand hygiene. Seek medical advice if symptoms become severe, breathing becomes difficult, or you are getting worse."
-            },
-            {
-                keywords: ["cough"],
-                answer:
-                    "Coughing can occur with colds, allergies, and other respiratory conditions.\n\n" +
-                    "Drink fluids and avoid smoke or other irritants. Seek urgent help for difficulty breathing, blue lips, or severe chest pain. If the cough persists or worsens, consult a healthcare professional."
-            },
-            {
-                keywords: ["healthy food", "healthy diet", "balanced diet", "nutrition"],
-                answer:
-                    "A balanced diet includes vegetables, fruits, whole grains, protein sources such as beans or eggs, and suitable amounts of healthy fats.\n\n" +
-                    "Choose a variety of foods and drink enough water. Individual dietary needs may differ because of medical conditions or allergies."
-            },
-            {
-                keywords: ["sleep", "insomnia", "sleep better"],
-                answer:
-                    "To support better sleep, try keeping a regular sleep schedule, reducing screen use before bedtime, and making your bedroom quiet and comfortable.\n\n" +
-                    "If sleep problems continue or affect your daily activities, consider speaking with a healthcare professional."
-            },
-            {
-                keywords: ["exercise", "physical activity", "fitness"],
-                answer:
-                    "Regular physical activity can support heart health, strength, mood, and general wellbeing.\n\n" +
-                    "Choose an activity suitable for your age and health, begin gradually, and increase activity as tolerated. Ask a healthcare professional for guidance if you have a condition that affects exercise."
-            },
-            {
-                keywords: ["water", "hydration", "dehydration"],
-                answer:
-                    "Drinking enough fluids helps maintain hydration. Needs vary with weather, activity, age, and health conditions.\n\n" +
-                    "Thirst and urine colour can provide clues about hydration, but they are not perfect measures. Follow your clinician's fluid advice if you have heart or kidney problems."
-            },
-            {
-                keywords: ["minor burn", "small burn", "burn first aid"],
-                answer:
-                    "For a minor thermal burn, cool the area under cool running water for 20 minutes. Remove nearby jewellery or clothing unless stuck to the skin. Do not apply ice, butter, or toothpaste.\n\n" +
-                    "Cover loosely with a clean, non-fluffy dressing. Seek medical care for large, deep, chemical, or electrical burns, or burns affecting the face, hands, genitals, or major joints."
-            },
-            {
-                keywords: ["first aid", "emergency"],
-                answer:
-                    "For a serious injury or medical emergency, contact your local emergency service immediately. In India, dial 112.\n\n" +
-                    "If someone is unconscious and not breathing normally, call for emergency help and follow the dispatcher's CPR instructions. Do not delay emergency care to use this chatbot."
-            },
-            {
-                keywords: ["heart attack", "chest pain", "stroke", "can't breathe", "cannot breathe", "difficulty breathing"],
-                answer:
-                    "⚠️ These symptoms may indicate a medical emergency. Call 112 in India or your local emergency number now. Do not wait for an online answer. Follow the emergency dispatcher's instructions."
-            },
-            {
-                keywords: ["medicine", "medication", "tablet", "antibiotic"],
-                answer:
-                    "Medicines have different uses, doses, side effects, and precautions. The right choice depends on the person and the condition.\n\n" +
-                    "Do not start antibiotics or change a prescribed dose based only on chatbot information. Ask a doctor or pharmacist about a specific medicine."
-            },
-            {
-                keywords: ["diabetes", "blood sugar"],
-                answer:
-                    "Diabetes is a condition in which blood glucose levels are too high. Management may include monitoring, suitable nutrition, physical activity, and prescribed treatment.\n\n" +
-                    "Treatment must be individualised by a healthcare professional. If a person with diabetes becomes unconscious or has a severe episode, seek emergency help."
-            },
-            {
-                keywords: ["blood pressure", "hypertension"],
-                answer:
-                    "Blood pressure measures the force of blood against artery walls. Both high and low readings need to be interpreted in context.\n\n" +
-                    "One reading alone may not establish a diagnosis. If you have repeated unusual readings or symptoms such as dizziness, consult a healthcare professional."
-            },
-            {
-                keywords: ["stomach pain", "abdominal pain", "stomach ache"],
-                answer:
-                    "Stomach pain can have many causes, ranging from indigestion to conditions that need urgent treatment.\n\n" +
-                    "Seek urgent medical care for severe or worsening pain, fainting, blood in vomit or stool, or pain accompanied by a rigid abdomen."
-            },
-            {
-                keywords: ["thank you", "thanks"],
-                answer:
-                    "You're welcome! 😊 I can provide basic health information. For personal medical advice, please consult a qualified healthcare professional."
-            },
-            {
-                keywords: ["hello", "hi", "hey"],
-                answer:
-                    "Hello! 👋 Welcome to Medi Assist. You can ask me about common symptoms, healthy habits, or basic first aid."
+            th: {
+                subtitle: "Ungal multilingual health information assistant",
+                language: "Language:", heading: "Naan eppadi help pannalaam?", ask: "Ask",
+                placeholder: "Health question type pannunga...", try: "Itha try pannunga:",
+                fever: "Fever guidance", symptoms: "Symptoms pathi guide pannunga",
+                healthy: "Healthy habits", burn: "Minor burn first aid", sleep: "Better sleep",
+                note: "Personal medical advice-ku qualified doctor-ah consult pannunga.",
+                disclaimer: "Safety note: Medi Assist diagnosis pannaadhu, medicine prescribe pannaadhu. Severe or life-threatening symptoms irundha udane emergency help seek pannunga. India-la 112 call pannunga.",
+                welcome: "Vanakkam! 👋 Naan Medi Assist.\nCommon symptoms, healthy habits, basic first aid pathi kelunga.\n\nNaan general educational information mattum provide pannuven; diagnosis or prescription panna maatten.",
+                empty: "Mudhal-la unga question type pannunga.",
+                feverAnswer: "Infection madhiri pala reasons-naala fever varalaam. Rest edunga, mudinja fluids kudinga, temperature monitor pannunga. Fever continue aana, worsen aana, illa concern irundha doctor-ah consult pannunga. 3 months-kku keezha irukkura baby-ku 38°C or above fever irundha urgent medical assessment thevai.",
+                headache: "Headache-ku pala reasons irukkalaam. Quiet place-la rest eduthu, ungalukku suitable-na water kudinga. Sudden severe headache, weakness, confusion, fainting, illa pesa difficulty irundha emergency medical help thevai.",
+                cold: "Common cold usually virus-naala varum. Rest edunga, fluids kudinga, hand hygiene follow pannunga. Symptoms worsen aana doctor-ah consult pannunga; breathing difficulty irundha urgent help seek pannunga.",
+                cough: "Cough infection, allergy, illa vera reasons-naala varalaam. Fluids kudinga; smoke and irritants avoid pannunga. Breathing difficulty, lips blue-aaguradhu, severe chest pain irundha urgent help seek pannunga.",
+                diet: "Balanced diet-la vegetables, fruits, whole grains, protein foods include pannalaam. Allergy or medical condition irundha unga food needs different-a irukkalaam.",
+                sleep: "Daily regular time-la thoonga try pannunga; bedtime-ku munnadi screen use reduce pannunga; room quiet-a vechukkonga. Sleep problem continue aana healthcare professional kitta pesunga.",
+                exercise: "Unga health-ku suitable-aana activity choose panni slow-ah start pannunga. Exercise affect pannura health condition irundha doctor advice kelunga.",
+                water: "Water needs weather, activity, age, health base panni maarum. Doctor fluids limit panna sollirundha avanga advice follow pannunga.",
+                burn: "Minor heat burn-na cool running water-la 20 minutes cool pannunga. Ice, butter, toothpaste apply panna vendam. Clean dressing-la loosely cover pannunga. Large, deep, chemical, electrical burn or face/hands/genitals/joints burn-na medical care seek pannunga.",
+                medicine: "Endha medicine or dose edukkanum nu naan recommend panna mudiyadhu. Doctor advice illama antibiotics start pannadheenga; prescribed dose change pannadheenga. Doctor or pharmacist kitta kelunga.",
+                diabetes: "Diabetes care person-to-person different-a irukkum. Food, activity, monitoring, treatment-ku healthcare professional plan follow pannunga. Unconscious-aana or severe episode irundha emergency help seek pannunga.",
+                bp: "Blood pressure reading-ai context-oda dhaan purinjukkanum. Repeated unusual readings or dizziness irundha doctor-ah consult pannunga.",
+                stomach: "Stomach pain-ku pala reasons irukkalaam. Severe/worsening pain, fainting, vomit/stool-la blood, illa abdomen hard-a irundha urgent medical care seek pannunga.",
+                emergency: "⚠️ Idhu medical emergency-a irukkalaam. India-la 112 or local emergency number-ku ippo call pannunga. Online answer-kaaga wait pannadheenga; emergency operator instructions follow pannunga.",
+                fallback: "Indha question-ku en kitta verified information illa; unga health pathi guess panna virumbala. Qualified healthcare professional-ah consult pannunga. Fever, headache, cold, cough, diet, sleep, exercise, hydration, minor burn, first aid pathi kelunga.",
+                hello: "Vanakkam! 👋 Common symptoms, healthy habits, basic first aid pathi general information share panna mudiyum.",
+                thanks: "Welcome! 😊 Naan general information mattum provide pannuven. Personal medical advice-ku qualified doctor-ah consult pannunga.",
+                duration: "Indha symptoms evlo nerama irukku? Few hours-aa, 1–2 days-aa, illa adhukku mela-aa?",
+                severity: "Symptoms mild-aa, moderate-aa, severe-aa? Severe/worsening symptoms, breathing difficulty, chest pain, confusion, fainting irundha udane emergency help seek pannunga.",
+                guideEnd: "Thanks. Idhoda cause-ai naan diagnose panna mudiyadhu. Symptoms continue aana, worsen aana doctor-ah consult pannunga. Sudden or severe symptoms-ku immediate medical help seek pannunga."
             }
-        ];
+        };
+
+        let guideState = null;
+        let guideData = {};
+        const $ = id => document.getElementById(id);
+
+        function currentLanguage() { return $("language").value; }
+        function t(key) { return languageText[currentLanguage()][key] || languageText.en[key] || ""; }
+
+        function changeLanguage() {
+            const keys = {
+                subtitle: "subtitle", languageLabel: "language", mainHeading: "heading",
+                askButton: "ask", question: "placeholder", tryLabel: "try",
+                suggestFever: "fever", suggestSymptoms: "symptoms", suggestHealthy: "healthy",
+                suggestBurn: "burn", suggestSleep: "sleep", smallNote: "note",
+                disclaimer: "disclaimer", backLink: "back"
+            };
+            for (const [id, key] of Object.entries(keys)) {
+                if (key === "placeholder") $(id).placeholder = t(key);
+                else if (key === "back") $(id).textContent = currentLanguage() === "ta" ? "← Dashboard-க்கு திரும்பு" : currentLanguage() === "th" ? "← Dashboard-ku thirumbu" : "← Back to Dashboard";
+                else $(id).textContent = t(key);
+            }
+            $("welcomeMessage").textContent = t("welcome");
+            $("question").setAttribute("aria-label", t("placeholder"));
+        }
 
         function addMessage(text, type) {
-            const chatBox = document.getElementById("chatBox");
+            const chatBox = $("chatBox");
             const message = document.createElement("div");
-
             message.className = "message " + type;
             message.textContent = text;
-
+            if (type === "bot") {
+                const speakButton = document.createElement("button");
+                speakButton.type = "button";
+                speakButton.className = "speak-button";
+                speakButton.textContent = "🔊 Read aloud";
+                speakButton.setAttribute("aria-label", "Read this answer aloud");
+                speakButton.addEventListener("click", () => speakText(text));
+                message.appendChild(document.createElement("br"));
+                message.appendChild(speakButton);
+            }
             chatBox.appendChild(message);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        function findAnswer(question) {
-            const normalised = question.toLowerCase().trim();
+        // Browser-based voice input and text-to-speech; no separate API key required.
+        let recognition = null;
+        function speechLocale() {
+            const lang = currentLanguage();
+            if (lang === "ta") return "ta-IN";
+            return "en-IN"; // Thanglish is best-effort English recognition.
+        }
 
-            for (const item of medicalAnswers) {
-                if (item.keywords.some(keyword =>
-                    normalised.includes(keyword)
-                )) {
-                    return item.answer;
-                }
+        function startVoiceInput() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                $("voiceStatus").textContent = "Voice input is not supported in this browser. Try Google Chrome or Microsoft Edge.";
+                return;
             }
+            if (recognition) { try { recognition.stop(); } catch (e) {} }
+            recognition = new SpeechRecognition();
+            recognition.lang = speechLocale();
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            $("voiceStatus").textContent = currentLanguage() === "ta" ? "பேசுங்கள்…" : "Listening… Please speak now.";
+            $("voiceInputButton").disabled = true;
+            recognition.onresult = function(event) {
+                const spokenText = event.results[0][0].transcript;
+                $("question").value = spokenText;
+                $("voiceStatus").textContent = "Recognized: " + spokenText;
+                // Put recognized words in the box so the user can review before sending.
+            };
+            recognition.onerror = function(event) {
+                $("voiceStatus").textContent = "Voice input error: " + event.error + ". Check microphone permission and try again.";
+            };
+            recognition.onend = function() { $("voiceInputButton").disabled = false; };
+            try { recognition.start(); }
+            catch (error) {
+                $("voiceStatus").textContent = "Could not start microphone. Please try again.";
+                $("voiceInputButton").disabled = false;
+            }
+        }
 
-            return "I don't have a verified answer for that question in my current medical information library.\n\n" +
-                   "Please consult a qualified healthcare professional for reliable advice. " +
-                   "You can also ask me about fever, headache, common cold, cough, healthy food, sleep, exercise, or basic first aid.";
+        function speakText(text) {
+            if (!("speechSynthesis" in window)) {
+                $("voiceStatus").textContent = "Voice output is not supported in this browser.";
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = speechLocale();
+            utterance.rate = 0.95;
+            utterance.onerror = function() { $("voiceStatus").textContent = "Could not play voice. Try another browser voice or language."; };
+            window.speechSynthesis.speak(utterance);
+            $("voiceStatus").textContent = "Reading answer aloud…";
+        }
+
+        function stopVoice() {
+            if (recognition) { try { recognition.stop(); } catch (e) {} }
+            if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+            $("voiceStatus").textContent = "Voice stopped.";
+            $("voiceInputButton").disabled = false;
+        }
+
+        function normalise(text) {
+            return text.toLowerCase().replace(/[.,!?;:()[\]{}]/g, " ").replace(/\s+/g, " ").trim();
+        }
+
+        function hasAny(text, words) { return words.some(word => text.includes(word)); }
+
+        function emergencyAnswer(text) {
+            const emergencyTerms = [
+                "chest pain", "heart attack", "stroke", "can't breathe", "cannot breathe",
+                "difficulty breathing", "shortness of breath", "unconscious", "not breathing",
+                "severe bleeding", "suicidal", "overdose", "seizure", "மூச்சுத் திணறல்",
+                "மார்பு வலி", "மயக்கமடைந்த", "uyira", "moochu thinaral", "nenju vali",
+                "moochu vida mudiyala", "mayakkam"
+            ];
+            return hasAny(text, emergencyTerms);
+        }
+
+        function findAnswer(question) {
+            const q = normalise(question);
+            if (emergencyAnswer(q)) return t("emergency");
+            if (hasAny(q, ["fever", "temperature", "காய்ச்சல்", "kaichal", "jwaram"])) return t("feverAnswer");
+            if (hasAny(q, ["headache", "head pain", "தலைவலி", "thala vali", "thalavali"])) return t("headache");
+            if (hasAny(q, ["runny nose", "sneezing", "common cold", "cold", "சளி", "thummal", "salippu"])) return t("cold");
+            if (hasAny(q, ["cough", "இருமல்", "irumal"])) return t("cough");
+            if (hasAny(q, ["healthy food", "healthy diet", "balanced diet", "nutrition", "food", "உணவு", "saapadu", "diet"])) return t("diet");
+            if (hasAny(q, ["sleep", "insomnia", "sleep better", "தூக்கம்", "thoong"])) return t("sleep");
+            if (hasAny(q, ["exercise", "physical activity", "fitness", "உடற்பயிற்சி", "exercise"])) return t("exercise");
+            if (hasAny(q, ["water", "hydration", "dehydration", "தண்ணீர்", "thanni", "water kudikanum"])) return t("water");
+            if (hasAny(q, ["minor burn", "small burn", "burn first aid", "தீக்காயம்", "theekayam"])) return t("burn");
+            if (hasAny(q, ["medicine", "medication", "tablet", "antibiotic", "மருந்து", "marundhu", "tablet edukk"])) return t("medicine");
+            if (hasAny(q, ["diabetes", "blood sugar", "நீரிழிவு", "sugar irukku"])) return t("diabetes");
+            if (hasAny(q, ["blood pressure", "hypertension", "bp", "ரத்த அழுத்தம்", "pressure"])) return t("bp");
+            if (hasAny(q, ["stomach pain", "abdominal pain", "stomach ache", "வயிற்று வலி", "vayiru vali"])) return t("stomach");
+            if (hasAny(q, ["thank you", "thanks", "நன்றி", "nandri"])) return t("thanks");
+            if (hasAny(q, ["hello", "hi", "hey", "வணக்கம்", "vanakkam", "hai"])) return t("hello");
+            return t("fallback");
         }
 
         function askQuestion() {
-            const input = document.getElementById("question");
+            const input = $("question");
             const question = input.value.trim();
-
-            if (!question) {
-                return;
-            }
+            if (!question) { addMessage(t("empty"), "bot"); return; }
 
             addMessage(question, "user");
             input.value = "";
 
-            const answer = findAnswer(question);
+            // Emergency warning takes priority, including during symptom follow-up.
+            if (emergencyAnswer(normalise(question))) {
+                guideState = null;
+                guideData = {};
+                setTimeout(() => addMessage(t("emergency"), "bot"), 120);
+                return;
+            }
 
-            setTimeout(() => {
-                addMessage(answer, "bot");
-            }, 250);
+            if (guideState === "duration") {
+                guideData.duration = question;
+                guideState = "severity";
+                setTimeout(() => addMessage(t("severity"), "bot"), 180);
+                return;
+            }
+            if (guideState === "severity") {
+                guideData.severity = question;
+                guideState = null;
+                const severe = hasAny(normalise(question), ["severe", "very bad", "romba mosam", "kadumai", "கடுமை"]);
+                setTimeout(() => addMessage(severe ? t("emergency") : t("guideEnd"), "bot"), 180);
+                guideData = {};
+                return;
+            }
+
+            const answer = findAnswer(question);
+            setTimeout(() => addMessage(answer, "bot"), 180);
         }
 
         function quickAsk(question) {
-            document.getElementById("question").value = question;
+            $("question").value = question;
             askQuestion();
         }
-    </script>
 
+        function startSymptomGuide() {
+            guideState = "duration";
+            guideData = {};
+            addMessage(t("symptoms"), "user");
+            addMessage(t("duration"), "bot");
+            $("question").focus();
+        }
+
+        $("question").addEventListener("keydown", event => {
+            if (event.key === "Enter") askQuestion();
+        });
+        changeLanguage();
+        // Keep the voice controls usable when the language selector changes.
+        $("language").addEventListener("change", () => {
+            if (recognition) { try { recognition.stop(); } catch (e) {} }
+            if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+            $("voiceStatus").textContent = currentLanguage() === "ta" ? "தமிழ் குரல் அமைப்பு தேர்ந்தெடுக்கப்பட்டது." : "Voice language set to " + speechLocale() + ".";
+        });
+    </script>
 </body>
 </html>
